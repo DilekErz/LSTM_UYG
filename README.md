@@ -282,27 +282,88 @@ else:
     print("Sonuç: NEGATİF")
 ```
 
-## Örnek Tahmin Mantığı
+## Model Sonuçları
 
-Model her test cümlesi için `0` ile `1` arasında bir değer üretmektedir.
+Model 100 epoch boyunca eğitilmiştir. Eğitim sonunda eğitim verisi üzerinde:
 
-Örneğin:
+- **Accuracy:** %100
+- **Loss:** 0.0046
+
+değerleri elde edilmiştir.
+
+Modelin yapısı toplam **9.505 eğitilebilir parametreden** oluşmaktadır:
 
 ```text
-Cümle: Film başlangıçta çok güzeldi ama ilerleyen bölümlerde sıkıcılaştı ve sonunda hiç beğenmedim
-Tahmin değeri: ...
-Sonuç: NEGATİF
+Embedding : 3.200 parametre
+LSTM      : 6.272 parametre
+Dense     : 33 parametre
+
+Toplam    : 9.505 parametre
 ```
 
-veya:
+Eğitim tamamlandıktan sonra model dört farklı Türkçe film yorumu üzerinde test edilmiştir.
+
+### Test 1
 
 ```text
-Cümle: Film başlangıçta çok kötüydü fakat zamanla güzelleşti ve sonunda gerçekten çok sevdim
-Tahmin değeri: ...
+Cümle:
+Film başlangıçta çok güzeldi ama ilerleyen bölümlerde
+sıkıcılaştı ve sonunda hiç beğenmedim
+
+Tahmin değeri: 0.9920177
 Sonuç: POZİTİF
 ```
 
-Tahmin değerleri model her yeniden eğitildiğinde değişebileceği için README içerisinde sabit bir tahmin değeri verilmemiştir.
+Bu cümlenin beklenen anlamı **negatif** olmasına rağmen model cümleyi **pozitif** olarak sınıflandırmıştır.
+
+### Test 2
+
+```text
+Cümle:
+Film başlangıçta çok kötüydü fakat zamanla güzelleşti
+ve sonunda gerçekten çok sevdim
+
+Tahmin değeri: 0.9950647
+Sonuç: POZİTİF
+```
+
+Model bu cümleyi **pozitif** olarak sınıflandırmıştır.
+
+### Test 3
+
+```text
+Cümle:
+İlk sahneler başarılıydı ama finali berbattı ve filmi sevmedim
+
+Tahmin değeri: 0.032279436
+Sonuç: NEGATİF
+```
+
+Model bu cümleyi **negatif** olarak sınıflandırmıştır.
+
+### Test 4
+
+```text
+Cümle:
+Başlangıçta sıkıcıydı fakat finali harikaydı
+ve filmi çok beğendim
+
+Tahmin değeri: 0.98096913
+Sonuç: POZİTİF
+```
+
+Model bu cümleyi **pozitif** olarak sınıflandırmıştır.
+
+### Genel Değerlendirme
+
+Dört test cümlesinin **3'ü beklenen duygu sınıfına uygun**, 1'i ise beklenen sınıftan farklı tahmin edilmiştir.
+
+| Test | Beklenen | Model Tahmini |
+|---|---|---|
+| Test 1 | NEGATİF | POZİTİF ❌ |
+| Test 2 | POZİTİF | POZİTİF ✅ |
+| Test 3 | NEGATİF | NEGATİF ✅ |
+| Test 4 | POZİTİF | POZİTİF ✅ |
 
 ## LSTM ve SimpleRNN Arasındaki Temel Fark
 
@@ -404,8 +465,10 @@ Bu uygulama ile birlikte aşağıdaki konular uygulamalı olarak incelenmiştir:
 
 Bu çalışma sonucunda **Long Short-Term Memory (LSTM)** mimarisinin doğal dil işleme ve duygu analizi problemlerinde nasıl kullanılabileceği uygulamalı olarak incelenmiştir.
 
-Türkçe film yorumlarından oluşan küçük bir veri seti hazırlanmış, metinler Tokenizer kullanılarak sayısal verilere dönüştürülmüş ve LSTM tabanlı bir sinir ağı modeli oluşturulmuştur.
+Türkçe film yorumları Tokenizer kullanılarak sayısal dizilere dönüştürülmüş, `Embedding`, `LSTM` ve `Dense` katmanlarından oluşan bir model geliştirilmiştir.
 
-Model eğitildikten sonra yeni Türkçe film yorumları üzerinde tahmin işlemleri gerçekleştirilmiş ve cümleler **pozitif** veya **negatif** olarak sınıflandırılmıştır.
+Model eğitim verisi üzerinde yüksek doğruluk elde etmiş ve oluşturulan dört test cümlesinin üçünde beklenen duygu sınıfını doğru şekilde tahmin etmiştir.
 
-Bu uygulama, yazılım geliştirme stajım kapsamında gerçekleştirdiğim **yapay sinir ağları, derin öğrenme, RNN ve LSTM çalışmalarının** bir parçasıdır.
+İlk test cümlesindeki yanlış sınıflandırma, eğitim veri setinin yalnızca **12 cümleden oluşması** ve modelin çok sınırlı örnek üzerinden öğrenmesi nedeniyle genelleme yeteneğinin sınırlı kalabileceğini göstermektedir. Eğitim doğruluğunun %100 olması tek başına modelin daha önce görmediği tüm cümleleri doğru sınıflandıracağı anlamına gelmemektedir.
+
+Bu uygulama, yazılım geliştirme stajım kapsamında **LSTM, doğal dil işleme ve duygu analizi konularını öğrenmek ve uygulamak amacıyla** gerçekleştirilmiştir.
